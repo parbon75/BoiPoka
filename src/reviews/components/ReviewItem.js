@@ -1,6 +1,7 @@
 import React from "react";
 
 import Card from "../../shared/components/UIElements/Card";
+import Button from "../../shared/components/FormElements/Button";
 import './ReviewItem.css';
 
 const ReviewItem = props => {
@@ -16,8 +17,8 @@ const ReviewItem = props => {
                     <p>{props.description}</p>
                 </div>
                 <div className="review-item__actions">
-                    <button>EDIT</button>
-                    <button>DELETE</button>
+                    <Button inverse to={`/reviews/${props.id}`}>EDIT</Button>
+                    <Button >DELETE</Button>
                 </div>
             </Card>
 

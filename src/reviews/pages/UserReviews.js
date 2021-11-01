@@ -1,4 +1,6 @@
 import React from "react";
+import { useParams } from "react-router";
+
 import ReviewList from "../components/ReviewList";
 
 const DUMMY_REVIEWS = [
@@ -26,7 +28,9 @@ const DUMMY_REVIEWS = [
 
 const UserReviews = () => {
 
-    return <ReviewList items={DUMMY_REVIEWS} />;
+    const userId = useParams().userId;
+    const loadedReviews = DUMMY_REVIEWS.filter(review => review.creator === userId);
+    return <ReviewList items={loadedReviews} />;
 };
 
 export default UserReviews;
