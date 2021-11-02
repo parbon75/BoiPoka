@@ -5,6 +5,7 @@ import Users from './users/pages/Users';
 import NewReview from './reviews/pages/NewReview';
 import UserReviews from './reviews/pages/UserReviews';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
+import EditReview from './reviews/pages/EditReview';
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
           </Route>
           <Route path="/reviews/new" exact>
             <NewReview />
+          </Route>
+          <Route path="/reviews/:reviewId" exact>
+            <EditReview />
           </Route>
           <Redirect to="/" />
         </Switch>
