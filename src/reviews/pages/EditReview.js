@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import './ReviewForm.css';
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
-import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH, VALIDATOR_MIN } from "../../shared/components/util/validators";
+import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "../../shared/components/util/validators";
+import { useForm } from "../../shared/hooks/form-hook";
+import Card from "../../shared/components/UIElements/Card";
+
 
 const DUMMY_REVIEWS = [
     {
@@ -31,21 +34,94 @@ const DUMMY_REVIEWS = [
 
 const EditReview = () => {
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const reviewId = useParams().reviewId;
 
+
+
+
+    const [formState, inputHandler, setFormData] = useForm(
+        {
+            title: {
+                value: '',
+                isValid: false
+            },
+
+            author: {
+                value: '',
+                isValid: false
+            },
+
+            review: {
+                value: '',
+                isValid: false
+            }
+
+        },
+        false
+    );
+
     const identifiedReview = DUMMY_REVIEWS.find(r => r.id === reviewId);
+
+    useEffect(() => {
+        if (identifiedReview) {
+            setFormData(
+                {
+                    title: {
+                        value: identifiedReview.bookTitle,
+                        isValid: true
+                    },
+
+                    author: {
+                        value: identifiedReview.bookAuthor,
+                        isValid: true
+                    },
+
+                    review: {
+                        value: identifiedReview.description,
+                        isValid: true
+                    }
+
+                },
+                true
+            );
+        }
+        setIsLoading(false);
+
+    }, [setFormData, identifiedReview]);
+
+
+    const reviewUpdateSubmitHandler = event => {
+        event.preventDefault();
+        console.log(formState.inputs);
+    };
+
+
+
+
 
     if (!identifiedReview) {
         return (
             <div className="center">
-                <h2>Could Not Find Review</h2>
+                <Card>
+                    <h2>Could Not Find Review</h2>
+                </Card>
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+            <div className="center">
+                <h2>Loading...</h2>
 
             </div>
         );
     }
 
     return (
-        <form className="review-form">
+        <form className="review-form" onSubmit={reviewUpdateSubmitHandler}>
             <Input
                 id="title"
                 element="input"
@@ -53,9 +129,9 @@ const EditReview = () => {
                 label="Title"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="Please enter a valid Title"
-                onInput={() => { }}
-                value={identifiedReview.bookTitle}
-                valid={true}
+                onInput={inputHandler}
+                initialValue={formState.inputs.title.value}
+                initialValidity={formState.inputs.title.isValid}
             />
             <Input
                 id="author"
@@ -64,9 +140,9 @@ const EditReview = () => {
                 label="Author"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="Please enter a valid Author"
-                onInput={() => { }}
-                value={identifiedReview.bookAuthor}
-                valid={true}
+                onInput={inputHandler}
+                initialValue={formState.inputs.author.value}
+                initialValidity={formState.inputs.author.isValid}
             />
             <Input
                 id="review"
@@ -74,11 +150,11 @@ const EditReview = () => {
                 label="Review"
                 validators={[VALIDATOR_MINLENGTH(5)]}
                 errorText="Please enter a valid review. At Least 5 chars"
-                onInput={() => { }}
-                value={identifiedReview.description}
-                valid={true}
+                onInput={inputHandler}
+                initialValue={formState.inputs.review.value}
+                initialValidity={formState.inputs.review.isValid}
             />
-            <Button type="submit" disabled={true}>UPDATE REVIEW</Button>
+            <Button type="submit" disabled={!formState.isValid}>UPDATE REVIEW</Button>
         </form>
     );
 };
